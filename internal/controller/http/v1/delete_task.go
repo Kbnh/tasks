@@ -18,7 +18,7 @@ func deleteTask(uc *usecase.UseCase) http.HandlerFunc {
 			w.WriteHeader(http.StatusBadRequest)
 			return
 		}
-		req.ID = idStr
+		req.ID = idStr // устанавливаем id в request dto
 
 		err := uc.DeleteTask(r.Context(), req) // вызываем usecase для удаления задачи
 		if err != nil {

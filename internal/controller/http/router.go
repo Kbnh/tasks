@@ -6,7 +6,7 @@ import (
 	"github.com/go-chi/chi/v5"
 )
 
-func Router(r chi.Router, uc *usecase.UseCase) {
+func Router(r chi.Router, uc *usecase.UseCase) { // Функция Router регистрирует маршруты и соответствующие обработчики для HTTP-запросов, используя роутер chi и экземпляр usecase для обработки бизнес-логики
 	// Task v1 endpoints
 	r.Post("/api/v1/tasks", v1.CreateTask(uc))
 	r.Get("/api/v1/tasks", v1.GetTasks(uc))

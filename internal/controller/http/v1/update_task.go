@@ -22,7 +22,7 @@ func updateTask(uc *usecase.UseCase) http.HandlerFunc {
 			w.WriteHeader(http.StatusBadRequest)
 			return
 		}
-		req.ID = idStr
+		req.ID = idStr // устанавливаем id в request dto
 
 		if err := json.NewDecoder(r.Body).Decode(&req); err != nil { // декодируем json в структуру
 			w.WriteHeader(http.StatusBadRequest)
@@ -31,11 +31,11 @@ func updateTask(uc *usecase.UseCase) http.HandlerFunc {
 
 		err := uc.UpdateTask(r.Context(), req) // вызываем usecase для обновления задачи
 		if err != nil {
-			if errors.Is(err, domain.ErrNotFound) {
+			if errors.Is(err, domain.ErrNotFound) { // если задача не найдена, возвращаем 404 Not Found
 				w.WriteHeader(http.StatusNotFound)
 				return
 			}
-			if errors.Is(err, domain.ErrNoFieldsToUpdate) {
+			if errors.Is(err, domain.ErrNoFieldsToUpdate) { // если нет полей для обновления, возвращаем 400 Bad Request
 				w.WriteHeader(http.StatusBadRequest)
 				return
 			}

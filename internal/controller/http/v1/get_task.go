@@ -19,7 +19,7 @@ func getTask(uc *usecase.UseCase) http.HandlerFunc {
 			w.WriteHeader(http.StatusBadRequest)
 			return
 		}
-		req.ID = idStr
+		req.ID = idStr // устанавливаем id в request dto
 
 		task, err := uc.GetTask(r.Context(), req) // вызываем usecase для получения задачи
 		if err != nil {

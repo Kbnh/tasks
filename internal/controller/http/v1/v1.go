@@ -6,6 +6,8 @@ import (
 	"github.com/Kbnh/tasks/internal/usecase"
 )
 
+// Экспортируемая обертка хендлеров для маршрутов API v1
+
 func CreateTask(uc *usecase.UseCase) http.HandlerFunc {
 	return createTask(uc)
 }

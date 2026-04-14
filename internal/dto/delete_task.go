@@ -1,5 +1,7 @@
 package dto
 
-type DeleteTaskRequest struct {
+type DeleteTaskRequest struct { // Структура запроса для удаления задачи, содержащая ID задачи в виде строки
 	ID string
 }
+
+// Response для удаления задачи не требуется, так как при успешном удалении обычно возвращается статус 204 No Content без тела ответа.

@@ -2,7 +2,7 @@ package domain
 
 import "errors"
 
-var (
+var ( // Кастомные ошибки
 	ErrNotFound                = errors.New("not found")
 	ErrAlreadyExists           = errors.New("already exists")
 	ErrInvalidInput            = errors.New("invalid input")
