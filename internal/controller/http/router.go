@@ -2,6 +2,7 @@ package http
 
 import (
 	v1 "github.com/Kbnh/tasks/internal/controller/http/v1"
+	v2 "github.com/Kbnh/tasks/internal/controller/http/v2"
 	"github.com/Kbnh/tasks/internal/usecase"
 	"github.com/go-chi/chi/v5"
 )
@@ -15,5 +16,5 @@ func Router(r chi.Router, uc *usecase.UseCase) { // Функция Router рег
 	r.Delete("/api/v1/tasks/{id}", v1.DeleteTask(uc))
 
 	// Task v2 endpoints (добавлю позже POST, будет возвращать помимо id еще title и description)
-	// r.Post("/api/v2/tasks", v2.CreateTask(uc))
+	r.Post("/api/v2/tasks", v2.CreateTask(uc))
 }
