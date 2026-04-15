@@ -7,7 +7,6 @@ import (
 	"github.com/Kbnh/tasks/internal/domain"
 	"github.com/Kbnh/tasks/internal/dto"
 	"github.com/google/uuid"
-	"github.com/rs/zerolog/log"
 )
 
 func (u *UseCase) DeleteTask(ctx context.Context, req dto.DeleteTaskRequest) error {
@@ -21,8 +20,6 @@ func (u *UseCase) DeleteTask(ctx context.Context, req dto.DeleteTaskRequest) err
 	if err != nil {
 		return fmt.Errorf("repo.DeleteTask: %w", err)
 	}
-
-	log.Info().Str("id", id.String()).Msg("Task deleted successfully") // Логируем успешное удаление задачи с ее ID
 
 	return nil
 

@@ -1,7 +1,10 @@
 package logger
 
 import (
+	"fmt"
+	"io"
 	"os"
+	"path/filepath"
 	"time"
 
 	"github.com/rs/zerolog"
@@ -9,28 +12,54 @@ import (
 )
 
 type Config struct { // Конфигурация для логгера
-	AppName    string `envconfig:"APP_NAME" required:"true"`
+	AppName    string `envconfig:"APP_NAME"    required:"true"`
 	AppVersion string `envconfig:"APP_VERSION" required:"true"`
-	Level      string `default:"error" envconfig:"LOGGER_LEVEL"`
-	Pretty     bool   `default:"false" envconfig:"LOGGER_PRETTY"`
+	Level      string `default:"error"         envconfig:"LOGGER_LEVEL"`
+	Pretty     bool   `default:"false"         envconfig:"LOGGER_PRETTY"`
+	Folder     string `default:"out/logs/"     envconfig:"LOGGER_FOLDER"`
 }
 
-func Init(c Config) { // Функция для инициализации логгера, которая настраивает формат времени, уровень логирования и добавляет общие поля для всех логов, такие как имя приложения и версия
+func Init(c Config) (io.Closer, error) {
 	zerolog.TimeFieldFormat = time.RFC3339
-	zerolog.SetGlobalLevel(zerolog.InfoLevel)
-
-	if level, err := zerolog.ParseLevel(c.Level); err == nil && level != zerolog.NoLevel { // Парсим уровень логирования из конфигурации и устанавливаем его, если он валиден и не равен zerolog.NoLevel
+	if level, err := zerolog.ParseLevel(c.Level); err == nil && level != zerolog.NoLevel {
 		zerolog.SetGlobalLevel(level)
 	}
 
-	log.Logger = log.With(). // Добавляем общие поля для всех логов, такие как имя приложения и версия, чтобы упростить фильтрацию и анализ логов в будущем
-					Str("app", c.AppName).
-					Str("version", c.AppVersion).
-					Logger()
-
-	if c.Pretty { // Если в конфигурации указано, что логирование должно быть в "красивом" формате, то настраиваем логгер на вывод в консоль с форматированием, что может быть полезно для разработки и отладки
-		log.Logger = log.Output(zerolog.ConsoleWriter{Out: os.Stderr, TimeFormat: "15:04:05"})
+	if err := os.MkdirAll(c.Folder, 0755); err != nil {
+		return nil, fmt.Errorf("os.MkdirAll: %w", err)
 	}
 
-	log.Info().Msg("logger: initialized") // Логируем информацию о том, что логгер был успешно инициализирован
+	timestamp := time.Now().UTC().Format("2006-01-02T15-04-05.000000")
+	logFilePath := filepath.Join(c.Folder, fmt.Sprintf("%s.log", timestamp))
+
+	file, err := os.Create(logFilePath)
+	if err != nil {
+		return nil, fmt.Errorf("os.Create: %w", err)
+	}
+
+	var writers []io.Writer
+
+	if c.Pretty {
+		writers = append(writers, zerolog.ConsoleWriter{
+			Out:        os.Stderr,
+			TimeFormat: "15:04:05",
+		})
+	} else {
+		writers = append(writers, os.Stderr)
+	}
+
+	writers = append(writers, file)
+
+	multi := zerolog.MultiLevelWriter(writers...)
+
+	log.Logger = log.With().
+		// Caller().
+		Str("app_name", c.AppName).
+		Str("app_version", c.AppVersion).
+		Logger().
+		Output(multi)
+
+	log.Info().Msg("logger initialized")
+
+	return file, nil
 }

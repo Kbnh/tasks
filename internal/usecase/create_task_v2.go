@@ -7,7 +7,6 @@ import (
 	"github.com/Kbnh/tasks/internal/domain"
 	"github.com/Kbnh/tasks/internal/dto"
 	"github.com/Kbnh/tasks/pkg/transaction"
-	"github.com/rs/zerolog/log"
 )
 
 func (u *UseCase) CreateTaskV2(ctx context.Context, req dto.CreateTaskRequest) (dto.CreateTaskResponseV2, error) {
@@ -30,8 +29,6 @@ func (u *UseCase) CreateTaskV2(ctx context.Context, req dto.CreateTaskRequest) (
 	if err != nil {
 		return res, fmt.Errorf("transaction.Wrap: %w", err)
 	}
-
-	log.Info().Str("id", task.ID.String()).Msg("Task created successfully") // Логируем успешное создание задачи с ее ID
 
 	return dto.CreateTaskResponseV2{ // Возвращаем ID созданной задачи в ответе
 		ID:          task.ID,

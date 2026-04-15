@@ -5,7 +5,6 @@ import (
 	"fmt"
 
 	"github.com/Kbnh/tasks/internal/dto"
-	"github.com/rs/zerolog/log"
 )
 
 func (u *UseCase) GetTasks(ctx context.Context, req dto.GetTasksRequest) (dto.GetTasksResponse, error) {
@@ -17,8 +16,6 @@ func (u *UseCase) GetTasks(ctx context.Context, req dto.GetTasksRequest) (dto.Ge
 		return res, fmt.Errorf("repo.GetTasks: %w", err)
 	}
 	res.Tasks = tasks // Заполняем поле Tasks в ответе полученными задачами
-
-	log.Info().Int("count", len(tasks)).Msg("Tasks retrieved successfully") // Логируем успешное получение задач с количеством полученных задач
 
 	return res, nil // Возвращаем ответ с задачами и nil в качестве ошибки
 }

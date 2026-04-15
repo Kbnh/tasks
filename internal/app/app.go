@@ -11,10 +11,10 @@ import (
 	"github.com/Kbnh/tasks/internal/adapter/postgres"
 	"github.com/Kbnh/tasks/internal/controller/http"
 	"github.com/Kbnh/tasks/internal/usecase"
-	_ "github.com/Kbnh/tasks/pkg/logger" // Инициализируем логгер, импортируя пакет, который настраивает глобальный логгер при загрузке
 	"github.com/rs/zerolog/log"
 
 	"github.com/Kbnh/tasks/pkg/httpserver"
+	"github.com/Kbnh/tasks/pkg/logger"
 	pgpool "github.com/Kbnh/tasks/pkg/postgres"
 	"github.com/Kbnh/tasks/pkg/router"
 	"github.com/Kbnh/tasks/pkg/transaction"
@@ -30,8 +30,8 @@ func Run(ctx context.Context, c config.Config) error {
 
 	uc := usecase.New(postgres.New()) // Создаем новый экземпляр usecase, передавая ему реализацию репозитория на основе PostgreSQL
 
-	r := router.New()  // Создаем новый роутер для обработки HTTP-запросов
-	http.Router(r, uc) // Регистрируем маршруты и обработчики HTTP, используя функцию Router из пакета http, передавая ей роутер и экземпляр usecase
+	r := router.New(logger.Middleware) // Создаем новый роутер для обработки HTTP-запросов
+	http.Router(r, uc)                 // Регистрируем маршруты и обработчики HTTP, используя функцию Router из пакета http, передавая ей роутер и экземпляр usecase
 
 	httpServer := httpserver.New(r, c.HTTP) // Создаем новый HTTP-сервер, передавая ему роутер и настройки из конфигурации
 

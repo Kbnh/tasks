@@ -8,7 +8,6 @@ import (
 	"github.com/Kbnh/tasks/internal/dto"
 	"github.com/Kbnh/tasks/pkg/transaction"
 	"github.com/google/uuid"
-	"github.com/rs/zerolog/log"
 )
 
 func (u *UseCase) UpdateTask(ctx context.Context, req dto.UpdateTaskRequest) error {
@@ -48,8 +47,6 @@ func (u *UseCase) UpdateTask(ctx context.Context, req dto.UpdateTaskRequest) err
 	if err != nil {
 		return fmt.Errorf("transaction.Wrap: %w", err)
 	}
-
-	log.Info().Str("id", id.String()).Msg("Task updated successfully") // Логируем успешное обновление задачи с ее ID
 
 	return nil
 }

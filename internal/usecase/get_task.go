@@ -7,7 +7,6 @@ import (
 	"github.com/Kbnh/tasks/internal/domain"
 	"github.com/Kbnh/tasks/internal/dto"
 	"github.com/google/uuid"
-	"github.com/rs/zerolog/log"
 )
 
 func (u *UseCase) GetTask(ctx context.Context, req dto.GetTaskRequest) (dto.GetTaskResponse, error) {
@@ -27,8 +26,6 @@ func (u *UseCase) GetTask(ctx context.Context, req dto.GetTaskRequest) (dto.GetT
 	if task.IsDeleted() { // Проверяем, помечена ли задача как удаленная
 		return res, domain.ErrNotFound
 	}
-
-	log.Info().Str("id", task.ID.String()).Msg("Task retrieved successfully") // Логируем успешное получение задачи с ее ID
 
 	return dto.GetTaskResponse{ // Возвращаем данные задачи в ответе
 		ID:          task.ID,
